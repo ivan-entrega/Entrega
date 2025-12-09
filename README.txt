@@ -1,3 +1,6 @@
+DESCRIPCIÓN:
+Backend desarrollado en Node.js con Express y SQLite para la gestión de ventas, inventario y proyectos de construcción.
+
 INSTRUCCIONES DE EJECUCIÓN:
 1. Inicie el servidor backend:
    > npm run dev
