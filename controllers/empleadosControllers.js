@@ -13,7 +13,7 @@ async function crearEmpleado(req, res) {
         // --- Validación de datos de entrada ---
         if (!email || !password || !rol_id || !departamento_id || !nombre_completo || !fecha_contratacion) {
             return res.status(400).json({ 
-                mensaje: '❌ Faltan datos requeridos (email, password, rol, depto, nombre, fecha).' 
+                mensaje: 'Faltan datos requeridos (email, password, rol, depto, nombre, fecha).' 
             });
         }
         
@@ -68,7 +68,7 @@ async function obtenerEmpleados(req, res) {
         });
         
         res.status(200).json({ 
-            mensaje: '✅ Listado de empleados consultado (RF-5).',
+            mensaje: 'Listado de empleados consultado (RF-5).',
             data: empleados 
         });
 

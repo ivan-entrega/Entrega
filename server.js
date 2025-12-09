@@ -12,6 +12,7 @@ const authRoutes = require('./mis_rutas/auth.js');
 const ventasRoutes = require('./mis_rutas/ventas.js');
 const inventarioRoutes = require('./mis_rutas/inventario.js');
 const proyectosRoutes = require('./mis_rutas/proyectos'); 
+const empleadosRoutes = require('./mis_rutas/empleados.js');
 
 // --- DEFINIR RUTAS (ENDPOINTS) ---
 app.use('/api/auth', authRoutes);
@@ -25,8 +26,9 @@ app.use('/api/inventario', inventarioRoutes);
 
 app.use('/api/proyectos', proyectosRoutes);
 // Esta ruta se encarga de las funcionalidades relacionadas con RF-13 (Mostrar información requerida - proyectos previos) y su restricción de modificación por el administrador.
-
+app.use('/api/empleados', empleadosRoutes);
 // --- INICIO DEL SERVIDOR ---
+
 
 db.sequelize.sync({ force: false }) 
     .then(() => {

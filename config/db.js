@@ -3,11 +3,11 @@ const { Sequelize, DataTypes } = require('sequelize');
 const fs = require('fs');
 const path = require('path');
 
-// CONFIGURACIÓN PARA SQLITE (Base de datos en archivo local)
+// CONFIGURACIÓN PARA SQLITE
 const sequelize = new Sequelize({
     dialect: 'sqlite',
-    storage: './database.sqlite', // Nombre del archivo donde se guardarán los datos
-    logging: false // Opcional: para que no llene la consola de texto
+    storage: './database.sqlite',
+    logging: false
 });
 
 const db = {};
