@@ -1,0 +1,9 @@
+INTEGRANTES DEL GRUPO:
+
+1. Matías Araya - matias.araya.01@gmail.com
+2. Marcelo Jara - marcelo.jara@alumnos.ucm.cl
+3. Iván Sánchez - ivan.sanchez@alumnos.ucm.cl
+
+CERTIFICACIÓN DE ENDPOINTS:
+===========================
+Los autores de la construcción de los endpoints certifican que TODOS revisaron y aprobaron todos los endpoints asociados a los 20 requerimientos. Por lo tanto, la implementación será considerada correcta o incorrecta bajo responsabilidad grupal.
