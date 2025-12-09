@@ -146,8 +146,6 @@ async function seed() {
         });
 
         // Producto ID 10 es un Panel LED en la lista de arriba
-        // (Nota: los IDs pueden variar, pero al ser bulkCreate suelen ser secuenciales. 
-        // Para mayor seguridad en producción se buscarían, pero para seed.js esto sirve).
         const prodVenta = productosCreados.find(p => p.sku === 'ILU-PAN-001');
 
         if (prodVenta) {

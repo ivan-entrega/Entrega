@@ -1,6 +1,6 @@
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-const { SECRET_KEY } = require('../config/secrets'); // <--- Importamos desde el nuevo archivo
+const { SECRET_KEY } = require('../config/secrets');
 
 async function login(req, res) {
     const { email, password } = req.body;
@@ -22,7 +22,6 @@ async function login(req, res) {
         departamento_id: 1,
         nombre: 'Admin Demo'
     };
-    // ----------------------------------------------
 
     // 1. Validar Email
     if (email !== empleadoSimulado.email) {

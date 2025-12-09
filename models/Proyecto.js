@@ -12,7 +12,7 @@ module.exports = (sequelize) => {
             type: DataTypes.STRING,
             allowNull: false
         },
-        descripcion: { // "Trabajo realizado en oficinas Banco de Chile..."
+        descripcion: { 
             type: DataTypes.TEXT,
             allowNull: true
         },
@@ -28,16 +28,12 @@ module.exports = (sequelize) => {
             type: DataTypes.STRING,
             allowNull: true
         }
-        // COMENTARIO: Todos estos campos (nombre, descripcion, cliente, url_imagen) están destinados a almacenar la información de los "trabajos previos" requerida por RF-13: "Mostrar tal información requerida", con el fin de "dar credibilidad de lo que se está vendiendo".
+        //almacenar la información de los trabajos previos requerida por RF-13
     }, {
         tableName: 'Proyectos',
         timestamps: true
     });
 
-    Proyecto.associate = (models) => {
-        // Opcional: Relacionar con departamento si quisieras filtrar estrictamente
-        // Proyecto.belongsTo(models.Departamento, { foreignKey: 'departamento_id' });
-    };
 
     return Proyecto;
 };

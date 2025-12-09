@@ -1,6 +1,5 @@
-// UBICACIÓN: middlewares/auth.js
+
 const jwt = require('jsonwebtoken');
-// IMPORTANTE: Importamos la clave desde el archivo común
 const { SECRET_KEY } = require('../config/secrets'); 
 
 function verifyToken(req, res, next) {
@@ -9,10 +8,9 @@ function verifyToken(req, res, next) {
     
     const [scheme, token] = authHeader.split(' ');
     if (scheme !== 'Bearer' || !token) return res.status(401).json({ mensaje: 'Formato inválido.' });
-    // COMENTARIO: Las líneas anteriores aseguran que el usuario haya iniciado sesión (RF-1: "ingreso de usuario") antes de acceder a las funcionalidades del sistema.
+    //aseguramos que el usuario haya iniciado sesión RF-1: ingreso de usuario
 
     try {
-        // Verifica usando la MISMA clave que se usó para firmar
         const decoded = jwt.verify(token, SECRET_KEY);
         req.user = decoded; 
         next();

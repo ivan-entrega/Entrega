@@ -1,4 +1,3 @@
-// models/DetalleVenta.js
 const { DataTypes } = require('sequelize');
 
 module.exports = (sequelize) => {
@@ -28,9 +27,9 @@ module.exports = (sequelize) => {
             type: DataTypes.INTEGER,
             allowNull: false
         },
-        // COMENTARIO: Los campos 'producto_id', 'cantidad', 'precio_venta_real' y 'margen_porcentaje' en el detalle cumplen con el almacenamiento de la información clave requerida en RF-16: "Registrar Venta" y RF-17: "Visualizar listado de ventas" (ya que la información se consulta desde aquí).
+        //cumplen con el almacenamiento de la información clave requerida en RF-16: "Registrar Venta" y RF-17
         
-        precio_venta_real: { // Precio al que se vendió finalmente (RF-16)
+        precio_venta_real: { // Precio al que se vendió (RF-16)
             type: DataTypes.FLOAT,
             allowNull: false
         },

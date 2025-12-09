@@ -6,12 +6,12 @@ const proyectosController = require('../controllers/proyectosController');
 
 router.use(verifyToken);
 
-// RF-13: Listar Proyectos (Visible para todos los empleados para mostrar credibilidad)
+// RF-13: Listar Proyectos 
 router.get('/', proyectosController.obtenerProyectos);
-// COMENTARIO: Esta ruta implementa la función R (Consulta) de RF-13: "Mostrar tal información requerida" (proyectos previos). Es accesible para todos los usuarios internos después de autenticarse, ya que su objetivo es dar credibilidad y proveer información del departamento.
+// Esta ruta implementa la función Consulta de RF-13
 
 // Agregar Proyectos (Solo Administrador)
 router.post('/', authorizeRole(['Administrador']), proyectosController.crearProyecto);
-// COMENTARIO: Esta ruta implementa la función C (Crear) de un proyecto. La restricción de acceso mediante authorizeRole(['Administrador']) asegura que la información mostrada (RF-13) solo sea modificable por el encargado correspondiente (el administrador), cumpliendo con la restricción de RF-13.
+// COMENTARIO: Esta ruta implementa la función C (Crear) de un proyecto. 
 
 module.exports = router;

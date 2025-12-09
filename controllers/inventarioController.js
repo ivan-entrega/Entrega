@@ -13,7 +13,7 @@ async function registrarMovimiento(req, res) {
     try {
         // 1. Buscar si el producto ya existe por SKU
         let producto = await db.Producto.findOne({ where: { sku } }, { transaction: t });
-        // COMENTARIO: La consulta (R) inicial verifica si el SKU existe, cumpliendo parte de la restricción de RF-19.
+        // La consulta inicial verifica si el SKU existe, cumpliendo parte de la restricción de RF-19.
 
         if (!producto) {
             // Si es una SALIDA y no existe el producto, error
@@ -31,7 +31,7 @@ async function registrarMovimiento(req, res) {
                 precio_venta_base: precio_venta,
                 stock_actual: 0 // Iniciamos en 0 y sumamos abajo
             }, { transaction: t });
-            // COMENTARIO: La creación (C) del producto al registrar una Entrada implementa la parte de "Registrar movimiento de inventario" de RF-19.
+            // la creación del producto al registrar una Entrada implementa la parte de Registrar movimiento de inventario de RF-19.
         }
 
         // 2. Calcular nuevo stock
@@ -76,7 +76,7 @@ async function registrarMovimiento(req, res) {
 async function obtenerInventario(req, res) {
     try {
         const productos = await db.Producto.findAll();
-        // COMENTARIO: La consulta (R) de todos los productos y sus datos (stock, SKU, precio costo) implementa la función principal de RF-20: "Consultar estado de inventario". La restricción de solo lectura se aplica en la capa de rutas/front-end.
+        // La restricción de solo lectura se aplica en la capa de rutas/front-end.
         res.status(200).json({ mensaje: 'Inventario consultado', data: productos });
     } catch (error) {
         res.status(500).json({ error: error.message });
@@ -102,7 +102,7 @@ async function actualizarProducto(req, res) {
         producto.estado = estado || producto.estado;
 
         await producto.save();
-        // COMENTARIO: Esta es la operación U (Actualizar) que permite modificar datos de productos y sus atributos (materiales, colores, usos, etc. implícitos en nombre/descripción/costo), cumpliendo con RF-6: "Actualizar datos de los atributos". La restricción de permisos debe validarse en el middleware.
+        // COMENTARIO: Esta es la operación actualizar que permite modificar datos de productos y sus atributos, cumpliendo con RF-6: "Actualizar datos de los atributos"
 
         res.status(200).json({ 
             mensaje: 'Producto actualizado correctamente (RF-6).', 
@@ -130,12 +130,12 @@ async function eliminarProducto(req, res) {
 
         // Eliminación física (o podría ser lógica con 'estado: Inactivo')
         await producto.destroy();
-        // COMENTARIO: La eliminación (D) del producto representa la función de RF-7: "Requisitos para eliminar atributos". La restricción de "previa autorización" (Master) y la limitación a "encargado de cada departamento" deben ser validadas en el middleware de la ruta.
+        // COMENTARIO: La eliminación del producto representa la función de RF-7
 
         res.status(200).json({ mensaje: 'Producto eliminado correctamente (RF-7).' });
 
     } catch (error) {
-        // Error común: intentar borrar un producto que ya tiene ventas asociadas (Integridad referencial)
+        // Error común: intentar borrar un producto que ya tiene ventas asociadas
         res.status(400).json({ 
             mensaje: 'No se puede eliminar el producto porque tiene ventas o movimientos asociados.',
             error: error.message 
@@ -143,5 +143,5 @@ async function eliminarProducto(req, res) {
     }
 }
 
-// IMPORTANTE: Agrégalas al export
+
 module.exports = { registrarMovimiento, obtenerInventario, actualizarProducto, eliminarProducto };

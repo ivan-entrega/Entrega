@@ -2,12 +2,9 @@
 const db = require('../config/db');
 
 /**
- * POST /api/ventas
  * Registra una venta validando stock (RF-16)
  */
 async function registrarVenta(req, res) {
-    // Obtenemos los datos del cuerpo de la petición (JSON)
-    // Se espera que 'detalles' sea un array con los productos a vender
     const { empleado_id, detalles } = req.body; 
 
     // 1. INICIAR TRANSACCIÓN (Crucial para integridad de datos)
@@ -29,35 +26,32 @@ async function registrarVenta(req, res) {
             total: 0,
             estado: 'Completada'
         }, { transaction: t });
-        // COMENTARIO: La creación (C) de la venta y el registro de la 'fecha' cumplen parte de RF-16: "Registrar Venta".
+        // La creación de la venta y el registro de la 'fecha' cumplen parte de RF-16: Registrar Venta
 
 
         // 3. PROCESAR CADA PRODUCTO (Detalle)
         for (const item of detalles) {
             const { producto_id, cantidad, precio_venta } = item;
-            // COMENTARIO: Los datos recibidos (producto_id, cantidad, precio_venta) cumplen con la recolección de información de RF-16.
+            // Los datos recibidos cumplen con la recolección de información de RF-16.
 
-            // a) Buscar el producto y BLOQUEARLO para evitar condiciones de carrera
             const producto = await db.Producto.findByPk(producto_id, { transaction: t });
 
-            // b) Validar existencia (RF-16)
+            // Validar existencia (RF-16)
             if (!producto) {
                 throw new Error(`El producto ID ${producto_id} no existe.`);
             }
-            // COMENTARIO: La validación de la existencia del producto (R) cumple la restricción de RF-16.
+            //La validación de la existencia del producto cumple la restricción de RF-16.
 
-            // c) Validar Stock Suficiente (RF-16)
+            // Validar Stock Suficiente (RF-16)
             if (producto.stock_actual < cantidad) {
                 throw new Error(`Stock insuficiente para '${producto.nombre}'. Disponible: ${producto.stock_actual}, Solicitado: ${cantidad}`);
             }
-            // COMENTARIO: La validación de que el stock sea suficiente cumple la restricción de RF-16.
+            //validación de que el stock sea suficiente
 
-            // d) Calcular margen (Opcional según RF-16, pero buena práctica)
-            // Margen = ((Precio Venta - Precio Costo) / Precio Venta) * 100
+            // Calcular margen según RF-16
             const margen = ((precio_venta - producto.precio_costo) / precio_venta) * 100;
-            // COMENTARIO: El cálculo del margen (%) cumple parte de la información solicitada en RF-16.
 
-            // e) Crear el registro en DetalleVenta
+            // Crear el registro en DetalleVenta
             await db.DetalleVenta.create({
                 venta_id: venta.id,
                 producto_id: producto_id,
@@ -67,12 +61,10 @@ async function registrarVenta(req, res) {
             }, { transaction: t });
             // COMENTARIO: La creación (C) del detalle de venta finaliza la implementación de RF-16.
 
-            // f) DESCONTAR STOCK (RF-16, RF-20)
+            //DESCONTAR STOCK (RF-16, RF-20)
             producto.stock_actual -= cantidad;
             await producto.save({ transaction: t });
-            // COMENTARIO: El descuento de stock y su guardado (U) es la consecuencia de registrar la venta (RF-16) y mantiene actualizado el inventario (RF-20).
 
-            // Sumar al total de la venta
             totalVenta += (precio_venta * cantidad);
         }
 
@@ -108,7 +100,7 @@ async function obtenerVentas(req, res) {
                 { model: db.DetalleVenta, as: 'detalles' }
             ]
         });
-        // COMENTARIO: La consulta (R) de las ventas con sus detalles implementa la función de RF-17: "Visualizar listado de ventas". La restricción de solo lectura se aplica en la capa de la vista o mediante middlewares que impidan el PUT/DELETE.
+        // consulta de las ventas con sus detalles función de RF-17: Visualizar listado de ventas.
         res.status(200).json({ mensaje: 'Listado de ventas', data: ventas });
     } catch (error) {
         res.status(500).json({ error: error.message });
@@ -134,11 +126,7 @@ async function actualizarVenta(req, res) {
             return res.status(404).json({ mensaje: 'Venta no encontrada.' });
         }
         
-        // COMENTARIO: La verificación del estado de la venta debe ir aquí (e.g., if (venta.estado !== 'Pendiente')). 
-        // Si la venta está "efectuada o cerrada", la modificación debe ser denegada (Restricción de RF-18).
 
-        // NOTA: Para este ejercicio simplificado, asumiremos que la venta tiene 1 solo detalle.
-        // En un sistema real, tendrías que buscar cuál detalle específico editar.
         const detalle = venta.detalles[0];
 
         if (!detalle) {
@@ -160,8 +148,7 @@ async function actualizarVenta(req, res) {
         productoAnterior.stock_actual += cantidadAnterior; 
         await productoAnterior.save({ transaction: t });
 
-        // 3. VALIDAR NUEVO STOCK (Verificar si podemos sacar la nueva cantidad)
-        // Buscamos el producto nuevo (puede ser el mismo ID u otro diferente)
+        // 3. VALIDAR NUEVO STOCK y Verificar si podemos sacar la nueva cantidad
         const productoNuevo = await db.Producto.findByPk(productoNuevoId, { transaction: t });
 
         if (!productoNuevo) {
@@ -175,7 +162,7 @@ async function actualizarVenta(req, res) {
                 mensaje: `Stock insuficiente para la modificación. Disponible: ${productoNuevo.stock_actual}, Solicitado: ${cantidadNueva}` 
             });
         }
-        // COMENTARIO: La re-validación del stock disponible implementa la restricción de RF-18: "Debe validarse nuevamente el stock disponible".
+        //La re-validación del stock disponible implementa la restricción de RF-18: Debe validarse nuevamente el stock disponible.
 
         // 4. DESCONTAR NUEVO STOCK
         productoNuevo.stock_actual -= cantidadNueva;
@@ -185,11 +172,10 @@ async function actualizarVenta(req, res) {
         detalle.producto_id = productoNuevoId;
         detalle.cantidad = cantidadNueva;
         detalle.precio_venta_real = precioNuevo;
-        // Recalcular margen (opcional)
         detalle.margen_porcentaje = ((precioNuevo - productoNuevo.precio_costo) / precioNuevo) * 100;
         
         await detalle.save({ transaction: t });
-        // COMENTARIO: La actualización (U) del detalle de venta permite modificar 'producto', 'cantidad', 'precio' y 'margen', cumpliendo con RF-18: "Actualizar venta".
+        // La actualización del detalle de venta permite cumple con RF-18: Actualizar venta.
 
         // 6. ACTUALIZAR EL TOTAL DE LA VENTA (Cabecera)
         venta.total = cantidadNueva * precioNuevo;

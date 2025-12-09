@@ -1,5 +1,5 @@
 // config/db.js
-const { Sequelize, DataTypes } = require('sequelize'); // Asegúrate que DataTypes esté aquí
+const { Sequelize, DataTypes } = require('sequelize'); 
 const fs = require('fs');
 const path = require('path');
 
@@ -14,7 +14,7 @@ const db = {};
 db.Sequelize = Sequelize;
 db.sequelize = sequelize;
 
-// --- CARGA DINÁMICA DE MODELOS (Esto se queda igual) ---
+// --- CARGA DINÁMICA DE MODELOS ---
 const modelsDir = path.join(__dirname, '../models');
 
 fs.readdirSync(modelsDir)
